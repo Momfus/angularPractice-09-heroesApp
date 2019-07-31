@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeroeModel } from '../../Models/heroe.model';
 import { NgForm } from '@angular/forms';
-import { IfStmt } from '@angular/compiler';
+import { HeroesService } from '../../services/heroes.service';
 
 @Component({
   selector: 'app-heroe',
@@ -12,7 +12,11 @@ export class HeroeComponent implements OnInit {
 
   heroe: HeroeModel = new HeroeModel();
 
-  constructor() { }
+  constructor(
+
+    private heroesService: HeroesService
+
+  ) { }
 
   ngOnInit() {
   }
@@ -25,8 +29,27 @@ export class HeroeComponent implements OnInit {
       return;
 
     }
-    console.log(form);
-    console.log(this.heroe);
+
+    if ( this.heroe.id ) {
+
+       this.heroesService.actualizarHeroe( this.heroe )
+            .subscribe( res => {
+
+              console.log(res);
+
+             });
+
+    } else {
+
+      this.heroesService.crearHeroe( this.heroe )
+          .subscribe( res => {
+
+            console.log(res);
+            this.heroe = res; // Instrucción que esta de más porque todo objeto igualmente es pasado por referencia
+
+          });
+
+    }
 
   }
 

@@ -3,6 +3,10 @@ import { HeroeModel } from '../../Models/heroe.model';
 import { NgForm } from '@angular/forms';
 import { HeroesService } from '../../services/heroes.service';
 
+import Swal from 'sweetalert2';
+import { Observable } from 'rxjs';
+
+
 @Component({
   selector: 'app-heroe',
   templateUrl: './heroe.component.html',
@@ -30,26 +34,42 @@ export class HeroeComponent implements OnInit {
 
     }
 
+    // Uso de cartel de espera y alerta de sweetalert2
+    Swal.fire({
+
+      title: 'Espere',
+      text: 'Guardando información',
+      type: 'info',
+      allowOutsideClick: false
+
+    });
+
+    Swal.showLoading();
+
+    let peticion: Observable<any>;
+
+    // Ver si se actualiza o crea el héroe
     if ( this.heroe.id ) {
 
-       this.heroesService.actualizarHeroe( this.heroe )
-            .subscribe( res => {
-
-              console.log(res);
-
-             });
+      peticion = this.heroesService.actualizarHeroe( this.heroe );
 
     } else {
 
-      this.heroesService.crearHeroe( this.heroe )
-          .subscribe( res => {
-
-            console.log(res);
-            this.heroe = res; // Instrucción que esta de más porque todo objeto igualmente es pasado por referencia
-
-          });
+      peticion = this.heroesService.crearHeroe( this.heroe );
 
     }
+
+    peticion.subscribe( res => {
+
+      Swal.fire({
+
+        title: this.heroe.nombre,
+        text: 'Se actualizó correctamente',
+        type: 'success'
+
+      });
+
+    });
 
   }
 

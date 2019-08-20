@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { HeroeModel } from '../../Models/heroe.model';
+import { ActivatedRoute } from '@angular/router';
 import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs';
+
+import { HeroeModel } from '../../Models/heroe.model';
 import { HeroesService } from '../../services/heroes.service';
 
 import Swal from 'sweetalert2';
-import { Observable } from 'rxjs';
 
 
 @Component({
@@ -18,11 +20,28 @@ export class HeroeComponent implements OnInit {
 
   constructor(
 
-    private heroesService: HeroesService
+    private heroesService: HeroesService,
+    private route: ActivatedRoute
 
   ) { }
 
   ngOnInit() {
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if ( id !== 'nuevo' ) {
+
+      this.heroesService.getHeroe( id )
+            .subscribe( (res: HeroeModel ) => {
+
+              this.heroe = res;
+              this.heroe.id = id;
+
+            });
+
+    }
+
+
   }
 
   guardar( form: NgForm ) {

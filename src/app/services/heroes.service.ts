@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HeroeModel } from '../Models/heroe.model';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators'; // delay permite retrasar la respuest una X cantidad de segundos (sirve para probar servicios que tal vez cargan muy rápido)
 
 
 @Injectable({
@@ -53,11 +53,24 @@ export class HeroesService {
 
   }
 
+  borrarHeroe( id: string ) {
+
+    return this.http.delete(`${ this.url }/heroes/${ id }.json`);
+
+  }
+
+  getHeroe( id: string ) {
+
+    return this.http.get(`${ this.url }/heroes/${ id }.json`);
+
+  }
+
   getHeroes() {
 
     return this.http.get(`${ this.url }/heroes.json`)
                 .pipe(
-                  map( this.crearArreglo ) // Equivalente a:  res => this.crearArreglo( res )
+                  map( this.crearArreglo ), // Equivalente a:  res => this.crearArreglo( res )
+                  delay(500)
                 );
 
   }
